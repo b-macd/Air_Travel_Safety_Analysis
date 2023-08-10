@@ -1,9 +1,10 @@
-# Air_Travel_Safety_Analysis
+# Air Travel Safety Analysis
 
-* dataset link:
-* * https://www.kaggle.com/datasets/deepcontractor/aircraft-accidents-failures-hijacks-dataset
+Dataset link:
 
-# Intro
+* <https://www.kaggle.com/datasets/deepcontractor/aircraft-accidents-failures-hijacks-dataset>
+
+## Intro
 
 * Individual aircraft incidents and associated factors
 
@@ -13,17 +14,15 @@
 
 * Ground casualty figures were excluded as most were purely coincidental
 
-* Includes military, private, passenger, and cargo flights 
+* Includes military, private, passenger, and cargo flights
 
-
-# Data vizualized
+## Data vizualized
 
 ![Flights Per Year](img/Flights%20per%20Year.png)
 
 ![Incidents Per Year](img/Incidents%20Per%20Year.png)
 
 ![Incidents as a Percent of Flights](img/Incidents%20as%20a%20Percent%20of%20Flights.png)
-
 
 * Percent of non-fatal incidents is: 73.6%
 * Percent of fatal incidents is: 26.4%
@@ -37,7 +36,7 @@
 ![Graph of incidents with no survivors vs some](img/Survivior%20or%20not.png)
 ![Top fatal incident categories](img/top%20fatal%20incidents.png)
 
-# Hypothesis
+## Hypothesis
 
 Null: Incident causes have no influence on fatal occurrences
 
@@ -48,10 +47,10 @@ Alternate: Incident causes have a significant influence on fatal occurrences
 ![ROC Curve Graph](img/ROC.png)
 ![Confusion Matrix](img/confusion.png)
 
-# Conlusion:
+## Conlusion
 
-* Null Hypothesis is rejected 
+Null Hypothesis is rejected
 
-* Alternate hypothesis is accepted:
-* * Incident causes have a significant influence on fatal occurences
+Alternate hypothesis is accepted:
 
+* Incident causes have a significant influence on fatal occurences
