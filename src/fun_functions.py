@@ -243,6 +243,8 @@ def occupants(df, col, index):
     for item in list_occupants:
         if item[1].isspace() == True:
             num_occupants.append(0)
+        elif item[1] == '':
+            num_occupants.append(0)
         else:
             num_occupants.append(int(item[1]))
 
