@@ -14,23 +14,20 @@ from yellowbrick.classifier import ClassPredictionError
 from yellowbrick.classifier import DiscriminationThreshold
 from sklearn.linear_model import RidgeClassifier
 from yellowbrick.classifier import PrecisionRecallCurve
-
-# in your notebook cell
-##import sys
-
-# path relative to your notebook
-#sys.path.insert(0, '../src')
-
-# import as usual
 import fun_functions as fun
 
 
 def read_csv(filepath):
-
+    '''
+    This takes a filepath for a csv and creates a pandas dataframe
+    '''
     return pd.read_csv(filepath)
 
 
 def clean_world_flights():
+    '''
+    This takes the world flights dataset and claens it for future functions.
+    '''
     dataframe = read_csv('../data/API_IS.AIR.DPRT_DS2_en_csv_v2_5735762/API_IS.AIR.DPRT_DS2_en_csv_v2_5735762.csv')
     dataframe = dataframe[dataframe['Country Name'] == 'World']
     dataframe = dataframe.drop(columns=['Country Name'
@@ -49,6 +46,9 @@ def clean_world_flights():
     return dataframe
 
 def total_flights_per_year():
+    '''
+    This world flights data and plots a graph showing the number of flights year over year.
+    '''
     df = clean_world_flights()
 
     fig, ax = plt.subplots(figsize = (16, 9))
@@ -79,6 +79,10 @@ def incidents_by_year():
 
 
 def occupants(df, col, index):
+    '''
+    This takes the crew/passenger manifest and 
+    fatality columns and creates a numerical column instead of categorical.
+    '''
     onboard_split = []
     for x in df[col]:
         onboard_split.append(x.split('/'))
@@ -109,6 +113,9 @@ def occupants(df, col, index):
 
 
 def clean_main_df():
+    '''
+    This converts the main incidents csv into a pandas dataframe and then cleans it for future use.
+    '''
     df = read_csv('../data/Aircraft_Incident_Dataset1.csv')
     df['Incident_Date'] = pd.to_datetime(df['Incident_Date'], format="%m/%d/%Y")
     df['Year'] = df['Incident_Date'].dt.year
@@ -123,6 +130,9 @@ def clean_main_df():
     return df
 
 def incidents_by_phase():
+    '''
+    This takes the main incidents dataframe and plots a graph showing total incidents by aircraft phase.
+    '''
     df = clean_main_df()
     df = pd.DataFrame(df['Aircraft_Phase'].value_counts()).reset_index()
     
@@ -134,6 +144,9 @@ def incidents_by_phase():
     plt.show()
 
 def incidents_by_category():
+    '''
+    This takes the main incidents dataframe and plots a graph showing total incidents by category
+    '''
     df = clean_main_df()
     df = df[['Year', 'incident_count', 'Incident_Category', 'Total Onboard Fatalities']]
     df = df.groupby('Incident_Category').sum().reset_index()
@@ -146,6 +159,11 @@ def incidents_by_category():
 
 
 def top_incident_categories_by_fatalities():
+    '''
+    This takes the main incidents dataframe and plots two graphs:
+     1.  showing total incedents by category
+     2.  showing total fatalities by top categories
+    '''
     df = incidents_by_category()
 
     df = df[df['Total Onboard Fatalities'] >50]
@@ -159,6 +177,10 @@ def top_incident_categories_by_fatalities():
     plt.show()
 
 def fatal_or_not():
+    '''
+    This takes the main incidents dataframe and adds a binary column
+    showing whether this was a fatal incident or not.  I use this column as my target in the models.
+    '''
     df = clean_main_df()
     fatal_or_not = []
 
@@ -172,8 +194,12 @@ def fatal_or_not():
 
 
 def chi2_test():
+    '''
+    This takes the fatal or not dataframe and conducts a chi squared test on the 
+    incident causes as features and the binary fatal column as the target.
+    '''
     df = fatal_or_not()
-    # Here, we are focusing on one specific column 'General_Health' and 'Heart_Disease'
+    
     cross_tab = pd.crosstab(df['Fatal or Not'], df['Incident_Cause(es)'])
     # Perform the chi-square test
     chi2_stat, p_val, dof, expected = chi2_contingency(cross_tab)
@@ -195,6 +221,13 @@ def chi2_test():
 
 
 def log_regression_test_on_causes():
+    '''
+    This takes the fatal or not dataframe and fits the 
+    incident causes as features and the binary fatal 
+    column as the target within a logistic regression model.
+
+    It returns the model as well as all Train and Test variables
+    '''
     df = fatal_or_not()
     causes = ['']
 
@@ -235,6 +268,11 @@ def log_regression_test_on_causes():
     return model, X_train, X_test, y_train, y_test
 
 def confusion_matrix():
+    '''
+    This takes the train and test values as well as the model from the 
+    log_regression_test_on_causes function and creates a confusion matrix
+    with the output
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
 
     cm = ConfusionMatrix(model)
@@ -245,6 +283,11 @@ def confusion_matrix():
 
 
 def ROC_curve_for_model():
+    '''
+    This takes the train and test values as well as the model from the 
+    log_regression_test_on_causes function and creates a ROC Curve
+    with the output
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
 
     visualizer = ROCAUC(model)
@@ -255,6 +298,10 @@ def ROC_curve_for_model():
 
 
 def plot_coefficients():
+    '''
+    This takes the model from the log_regression_test_on_causes 
+    function and creates a graph showing the ceofficients
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
 
     model_output1 = pd.DataFrame()
@@ -278,6 +325,10 @@ def plot_coefficients():
 
 
 def random_forest_on_data():
+    '''
+    This takes the train and test values from the log_regression_test_on_causes 
+    function and fits it to a random forest model then plots the output
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
     classes = ['Non-Fatal', 'Fatal']
     visualizer = ClassPredictionError(
@@ -295,6 +346,10 @@ def random_forest_on_data():
 
 
 def find_discrimination_threshold():
+    '''
+    This takes the train values from the log_regression_test_on_causes 
+    function and runs a logistic regression model to find the ideal discrimination threshold
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
     model = LogisticRegression(multi_class="auto", solver="liblinear")
     visualizer = DiscriminationThreshold(model)
@@ -303,6 +358,10 @@ def find_discrimination_threshold():
     visualizer.show() 
 
 def precision_recall_curve():
+    '''
+    This takes the train and test values from the log_regression_test_on_causes 
+    function and runs a ridgeclassifier model then plots the results as a presicion recall curve
+    '''
     model, X_train, X_test, y_train, y_test = log_regression_test_on_causes()
     viz = PrecisionRecallCurve(RidgeClassifier(random_state=0))
     viz.fit(X_train, y_train)
