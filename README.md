@@ -42,11 +42,17 @@ Null: Incident causes have no influence on fatal occurrences
 
 Alternate: Incident causes have a significant influence on fatal occurrences
 
+## Testing
+
 I used the Chi squared hypothesis test as it is made for the type of dataset that I have.  
 
 * Specifically it compares individual categories(columns in the case of my data) against a dependent variable and takes the overall distribution of all pairs to get a p-value.  
 
-* * My test showed a p-value that was well below my 5% threshold leading me to reject the null hypothesis.  
+  * My test showed a p-value that was well below my 5% threshold leading me to reject the null hypothesis.  
+
+    * Chi-Square Statistic: 2580.100591898037
+    * P-value: 3.1302952563137346e-249
+    * Degrees of Freedom: 580
 
 I then trained a logistic regression model with my feature and target values and found a significant predictive relationship between the two.
 
